@@ -1,7 +1,7 @@
 FROM alpine:3.7
 
 # The version numbers to download and build
-ENV MARIADB_VER 5.1.67
+ENV MARIADB_VER 5.1
 ENV JUDY_VER 1.0.5
 
 RUN \
