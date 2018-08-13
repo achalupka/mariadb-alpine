@@ -1,7 +1,7 @@
 FROM alpine:3.7
 
 # The version numbers to download and build
-ENV MARIADB_VER 5.1.66
+ENV MARIADB_VER 5.1.67
 ENV JUDY_VER 1.0.5
 
 RUN \
@@ -24,7 +24,7 @@ RUN \
     # Download and unpack mariadb
     && mkdir -p /opt/src \
     && mkdir -p /etc/mysql \
-    && wget -O /opt/src/mdb.tar.gz https://downloads.mariadb.org/interstitial/mariadb-5.1.66/kvm-tarbake-jaunty-x86/mariadb-5.1.66.tar.gz/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org \
+    && wget -O /opt/src/mdb.tar.gz https://downloads.mariadb.org/interstitial/mariadb-${MARIADB_VER}/kvm-tarbake-jaunty-x86/mariadb-${MARIADB_VER}.tar.gz/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org \
     && cd /opt/src && tar -xf mdb.tar.gz && rm mdb.tar.gz \
     # Download and unpack Judy (needed for OQGraph)
     && wget -O /opt/src/judy.tar.gz http://downloads.sourceforge.net/project/judy/judy/Judy-${JUDY_VER}/Judy-${JUDY_VER}.tar.gz \
