@@ -8,7 +8,7 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 		exit 1
 	fi
 
-	#mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
 	# These statements _must_ be on individual lines, and _must_ end with
 	# semicolons (no line breaks or comments are permitted).
@@ -24,7 +24,7 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 	EOSQL
 
 	if [ "$MYSQL_DATABASE" ]; then
-		echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE ${MYSQL_CHARSET:+CHARACTER SET $MYSQL_CHARSET};" >> "$TEMP_FILE"
+		echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE CHARACTER SET utf8 COLLATE utf8_general_ci;" >> "$TEMP_FILE"
 	fi
 
 	if [ "$MYSQL_USER" -a "$MYSQL_PASSWORD" ]; then
