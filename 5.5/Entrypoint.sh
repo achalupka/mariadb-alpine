@@ -2,11 +2,6 @@
 set -e
 
 if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
-	if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" ]; then
-		echo >&2 'error: database is uninitialized and MYSQL_ROOT_PASSWORD not set'
-		echo >&2 '  Did you forget to add -e MYSQL_ROOT_PASSWORD=... ?'
-		exit 1
-	fi
 
 	mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
@@ -16,9 +11,13 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 	TEMP_FILE='/tmp/mysql-first-time.sql'
 	cat > "$TEMP_FILE" <<-EOSQL
 		DELETE FROM mysql.user ;
-		CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
+		FLUSH PRIVILEGES;
+		CREATE USER 'root'@'%' IDENTIFIED BY 'password' ;
 		GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
         GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.0%';
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+        UPDATE user SET password=PASSWORD("") WHERE user='root' AND host='localhost';
 		DROP DATABASE IF EXISTS test ;
 		FLUSH PRIVILEGES;
 	EOSQL
