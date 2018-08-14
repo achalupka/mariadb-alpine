@@ -18,7 +18,9 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 		DELETE FROM mysql.user ;
 		CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
 		GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
 		DROP DATABASE IF EXISTS test ;
+		FLUSH PRIVILEGES;
 	EOSQL
 
 	if [ "$MYSQL_DATABASE" ]; then
