@@ -11,19 +11,18 @@ if [ ! -d '/var/lib/mysql/mysql' -a "${1%_safe}" = 'mysqld' ]; then
 	TEMP_FILE='/tmp/mysql-first-time.sql'
 	cat > "$TEMP_FILE" <<-EOSQL
 		DELETE FROM mysql.user ;
-		FLUSH PRIVILEGES;
-		CREATE USER 'root'@'%' IDENTIFIED BY 'password' ;
-		GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
-        GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
-        GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.0%';
+		CREATE USER 'root'@'%' IDENTIFIED BY 'password';
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
         GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
         UPDATE user SET password=PASSWORD("") WHERE user='root' AND host='localhost';
+        FLUSH PRIVILEGES;
 		DROP DATABASE IF EXISTS test ;
-		FLUSH PRIVILEGES;
 	EOSQL
 
 	if [ "$MYSQL_DATABASE" ]; then
-		echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE CHARACTER SET utf8 COLLATE utf8_general_ci;" >> "$TEMP_FILE"
+		echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE ${MYSQL_CHARSET:+CHARACTER SET $MYSQL_CHARSET};" >> "$TEMP_FILE"
 	fi
 
 	if [ "$MYSQL_USER" -a "$MYSQL_PASSWORD" ]; then

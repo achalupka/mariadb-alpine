@@ -1,4 +1,15 @@
 #!/bin/sh
+
+if [ ! -d "/run/mysqld" ]; then
+  mkdir -p /run/mysqld
+  chown -R mysql:mysql /run/mysqld
+fi
+
+if [ -d /var/lib/mysql/mysql ]; then
+  echo "[i] MySQL directory already present, skipping creation"
+else
+  echo "[i] MySQL data directory not found, creating initial DBs"
+
   chown -R mysql:mysql /var/lib/mysql
 
   mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql > /dev/null
@@ -15,7 +26,7 @@
 CREATE DATABASE IF NOT EXISTS \`mysql\` CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE mysql;
 FLUSH PRIVILEGES;
-CREATE USER 'root'@'%' IDENTIFIED BY 'password';
+CREATE USER 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
 UPDATE user SET password=PASSWORD("") WHERE user='root' AND host='localhost';
@@ -29,7 +40,7 @@ EOF
 
   /usr/bin/mysqld --user=mysql --bootstrap --verbose=0 < $tfile
   rm -f $tfile
-
+fi
 
 exec mysqld --user=mysql --console
 
