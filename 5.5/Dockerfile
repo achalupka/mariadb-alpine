@@ -10,8 +10,8 @@ RUN apt-get update && \
 
 
 EXPOSE 3306
+COPY entrypoint.sh /entrypoint.sh
 
-ADD run.sh /scripts/run.sh
-RUN chmod 755 /scripts/run.sh
-ENTRYPOINT ["/scripts/run.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
+CMD ["mysqld", "--user=mysql"]
